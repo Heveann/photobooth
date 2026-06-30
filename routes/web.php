@@ -24,6 +24,7 @@ Route::get('/download/{session_code}', [CameraController::class, 'download'])->n
 
 // Gallery
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+Route::delete('/gallery/{id}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
 
 // Admin Auth Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');

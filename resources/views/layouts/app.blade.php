@@ -163,6 +163,53 @@
                 transform: translateY(0);
             }
         }
+
+        /* Custom Cursor */
+        @media (pointer: fine) {
+            * {
+                cursor: none !important;
+            }
+        }
+
+        .custom-cursor-dot,
+        .custom-cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        .custom-cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-accent-pink);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .custom-cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 107, 152, 0.5);
+            background-color: rgba(255, 107, 152, 0.05);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        /* Interactive state */
+        .cursor-hover .custom-cursor-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--color-accent-rose);
+        }
+        
+        .cursor-hover .custom-cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 107, 152, 0.1);
+            border-color: var(--color-accent-rose);
+        }
         
         @yield('styles')
     </style>
@@ -246,6 +293,59 @@
                 el.style.animationPlayState = 'paused';
                 observer.observe(el);
             });
+        });
+    </script>
+
+    <!-- Custom Cursor Elements -->
+    <div class="custom-cursor-dot"></div>
+    <div class="custom-cursor-outline"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.matchMedia("(pointer: fine)").matches) {
+                const cursorDot = document.querySelector('.custom-cursor-dot');
+                const cursorOutline = document.querySelector('.custom-cursor-outline');
+                
+                let mouseX = 0;
+                let mouseY = 0;
+                let outlineX = 0;
+                let outlineY = 0;
+                
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    cursorDot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+                });
+                
+                function animate() {
+                    let distX = mouseX - outlineX;
+                    let distY = mouseY - outlineY;
+                    
+                    outlineX = outlineX + (distX * 0.15);
+                    outlineY = outlineY + (distY * 0.15);
+                    
+                    cursorOutline.style.transform = `translate(calc(${outlineX}px - 50%), calc(${outlineY}px - 50%))`;
+                    
+                    requestAnimationFrame(animate);
+                }
+                animate();
+
+                // Interactive elements hover effect using event delegation
+                document.body.addEventListener('mouseover', (e) => {
+                    if (e.target.closest('a, button, input, select, textarea, [role="button"], .interactive')) {
+                        document.body.classList.add('cursor-hover');
+                    }
+                });
+                
+                document.body.addEventListener('mouseout', (e) => {
+                    if (e.target.closest('a, button, input, select, textarea, [role="button"], .interactive')) {
+                        document.body.classList.remove('cursor-hover');
+                    }
+                });
+            } else {
+                document.querySelector('.custom-cursor-dot').style.display = 'none';
+                document.querySelector('.custom-cursor-outline').style.display = 'none';
+            }
         });
     </script>
     
